@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f7f8" />
+    <title>Bucket — Activities for later</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <main id="authView" class="auth-shell view">
+      <section class="auth-hero">
+        <p class="eyebrow">Dein smarter Activity-Speicher</p>
+        <h1>Bucket</h1>
+        <p>Speichere Restaurants, Dates, Trips und Events — finde sie wieder, plane sie mit Freunden und hake sie ab.</p>
+      </section>
+
+      <section class="auth-card card">
+        <div class="segmented" aria-label="Auth Modus">
+          <button id="loginTab" class="segment active" type="button">Login</button>
+          <button id="signupTab" class="segment" type="button">Registrieren</button>
+        </div>
+
+        <form id="authForm" class="form stack">
+          <div>
+            <label for="authEmail">E-Mail</label>
+            <input id="authEmail" type="email" autocomplete="email" placeholder="du@example.com" required />
+          </div>
+          <div>
+            <label for="authPassword">Passwort</label>
+            <input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Mindestens 6 Zeichen" required />
+          </div>
+          <p id="authError" class="form-message error" hidden></p>
+          <button id="authSubmit" class="btn btn-primary btn-full" type="submit">Einloggen</button>
+        </form>
+      </section>
+    </main>
+
+    <main id="dashboardView" class="app-shell view hidden">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Welcome back</p>
+          <h1>Bucket</h1>
+          <p id="userEmail" class="muted"></p>
+        </div>
+        <div class="header-actions">
+          <button id="newActivityBtn" class="btn btn-primary" type="button">Neue Aktivität</button>
+          <button id="logoutBtn" class="btn btn-ghost" type="button">Logout</button>
+        </div>
+      </header>
+
+      <section class="toolbar card">
+        <label class="search-label" for="searchInput">Suche</label>
+        <input id="searchInput" class="search-input" type="search" placeholder="Titel, Ort, Tags suchen …" />
+        <div id="categoryFilters" class="chip-row" aria-label="Kategorie Filter"></div>
+        <div id="statusFilters" class="chip-row" aria-label="Status Filter"></div>
+      </section>
+
+      <section class="dashboard-meta">
+        <div>
+          <h2>Gespeicherte Ideen</h2>
+          <p id="resultCount" class="muted">Noch keine Aktivitäten geladen.</p>
+        </div>
+      </section>
+
+      <section id="loadingState" class="state-card card hidden">Aktivitäten werden geladen …</section>
+      <section id="emptyState" class="empty-state card hidden">
+        <span>🪣</span>
+        <h2>Dein Bucket ist noch leer</h2>
+        <p>Speichere deine erste Idee — vom neuen Café bis zum Wochenendtrip.</p>
+        <button class="btn btn-primary" type="button" data-open-activity>Erste Aktivität erstellen</button>
+      </section>
+      <section id="activitiesGrid" class="activities-grid" aria-live="polite"></section>
+    </main>
+
+    <dialog id="activityModal" class="modal">
+      <form id="activityForm" class="modal-card form" method="dialog">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Bucket Item</p>
+            <h2 id="activityModalTitle">Neue Aktivität</h2>
+          </div>
+          <button class="icon-btn" type="button" aria-label="Schließen" data-close-activity>×</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="span-2">
+            <label for="title">Titel *</label>
+            <input id="title" name="title" required placeholder="z. B. Neues Izakaya in Kreuzberg" />
+          </div>
+          <div class="span-2">
+            <label for="description">Beschreibung</label>
+            <textarea id="description" name="description" rows="3" placeholder="Warum ist diese Idee spannend?"></textarea>
+          </div>
+          <div>
+            <label for="source_url">Source URL</label>
+            <input id="source_url" name="source_url" type="url" placeholder="https://…" />
+          </div>
+          <div>
+            <label for="image_url">Image URL</label>
+            <input id="image_url" name="image_url" type="url" placeholder="https://…" />
+          </div>
+          <div>
+            <label for="location_name">Location Name</label>
+            <input id="location_name" name="location_name" placeholder="Name des Orts" />
+          </div>
+          <div>
+            <label for="address">Address</label>
+            <input id="address" name="address" placeholder="Straße, Stadt" />
+          </div>
+          <div>
+            <label for="category">Category</label>
+            <select id="category" name="category"></select>
+          </div>
+          <div>
+            <label for="price_level">Price Level</label>
+            <select id="price_level" name="price_level"></select>
+          </div>
+          <div>
+            <label for="estimated_price">Estimated Price</label>
+            <input id="estimated_price" name="estimated_price" type="number" step="0.01" min="0" placeholder="25" />
+          </div>
+          <div>
+            <label for="duration">Duration</label>
+            <input id="duration" name="duration" placeholder="2h, Abend, Wochenende …" />
+          </div>
+          <div>
+            <label for="indoor_outdoor">Indoor/Outdoor</label>
+            <select id="indoor_outdoor" name="indoor_outdoor"></select>
+          </div>
+          <div>
+            <label for="status">Status</label>
+            <select id="status" name="status"></select>
+          </div>
+          <div>
+            <label for="suitable_for">Suitable For</label>
+            <select id="suitable_for" name="suitable_for" multiple size="5"></select>
+            <small>Mehrfachauswahl mit Cmd/Ctrl oder Shift.</small>
+          </div>
+          <div>
+            <label for="tags">Tags</label>
+            <input id="tags" name="tags" placeholder="cozy, brunch, rainy day" />
+            <small>Kommagetrennt, wird als Array gespeichert.</small>
+          </div>
+        </div>
+
+        <p id="activityError" class="form-message error" hidden></p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-close-activity>Abbrechen</button>
+          <button id="saveActivityBtn" class="btn btn-primary" type="submit">Speichern</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="planModal" class="modal">
+      <form id="planForm" class="modal-card form" method="dialog">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Mit Freunden planen</p>
+            <h2 id="planActivityTitle">Plan erstellen</h2>
+          </div>
+          <button class="icon-btn" type="button" aria-label="Schließen" data-close-plan>×</button>
+        </div>
+        <div class="stack">
+          <div>
+            <label for="planned_for">Datum & Uhrzeit</label>
+            <input id="planned_for" name="planned_for" type="datetime-local" required />
+          </div>
+          <div>
+            <label for="plan_note">Notiz</label>
+            <textarea id="plan_note" name="plan_note" rows="3" placeholder="Treffpunkt, Idee, Kontext …"></textarea>
+          </div>
+        </div>
+        <div id="shareLinkBox" class="share-box hidden">
+          <label for="shareLink">Share-Link</label>
+          <div class="copy-row">
+            <input id="shareLink" readonly />
+            <button id="copyShareBtn" class="btn btn-secondary" type="button">Kopieren</button>
+          </div>
+        </div>
+        <p id="planError" class="form-message error" hidden></p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" data-close-plan>Schließen</button>
+          <button id="savePlanBtn" class="btn btn-primary" type="submit">Plan speichern</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

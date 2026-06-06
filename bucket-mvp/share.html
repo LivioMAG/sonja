@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f7f8" />
+    <title>Bucket Share</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="share-page">
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <main class="share-shell">
+      <a class="brand-link" href="index.html">Bucket</a>
+      <section id="shareLoading" class="state-card card">Plan wird geladen …</section>
+      <section id="shareError" class="state-card card error-card hidden">
+        <h1>Share-Link nicht gefunden</h1>
+        <p>Bitte prüfe den Link oder frage die Person, die ihn erstellt hat.</p>
+      </section>
+      <section id="shareContent" class="share-card card hidden"></section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabaseClient.js"></script>
+    <script src="share.js"></script>
+  </body>
+</html>
